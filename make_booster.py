@@ -59,6 +59,7 @@ print(timespiral_cards)
 print(len(timespiral_cards))
 '''
 
+#Get all commons in a set and return a list of them
 def get_common_cards_in_set(set_code: str) -> list:
     cards = []
     for i in jdata:
@@ -68,6 +69,7 @@ def get_common_cards_in_set(set_code: str) -> list:
                     cards.append(i['name'])
     return cards
 
+#Get all uncommons in a set and return a list of them
 def get_uncommon_cards_in_set(set_code: str) -> list:
     cards = []
     for i in jdata:
@@ -77,6 +79,7 @@ def get_uncommon_cards_in_set(set_code: str) -> list:
                     cards.append(i['name'])
     return cards
 
+#Get all rares in a set and return a list of them
 def get_rare_cards_in_set(set_code: str) -> list:
     cards = []
     for i in jdata:
@@ -86,6 +89,7 @@ def get_rare_cards_in_set(set_code: str) -> list:
                     cards.append(i['name'])
     return cards
 
+#Get all mythic rares in a set and return a list of them
 def get_mythic_cards_in_set(set_code: str) -> list:
     cards = []
     for i in jdata:
@@ -95,6 +99,7 @@ def get_mythic_cards_in_set(set_code: str) -> list:
                     cards.append(i['name'])
     return cards
 
+#Get all lands in a set and return a list of them
 def get_lands_in_set(set_code: str) -> list:
     cards = []
     for i in jdata:
@@ -103,6 +108,7 @@ def get_lands_in_set(set_code: str) -> list:
                 cards.append(i['name'])
     return cards
 
+#Get all non-foil wildcards in a set and return a list of them
 def get_nonfoil_wildcards_in_set(set_code: str) -> list:
     cards = []
     for i in jdata:
@@ -111,6 +117,7 @@ def get_nonfoil_wildcards_in_set(set_code: str) -> list:
                 cards.append(i['name'])
     return cards
 
+#Get all foil wildcards in a set and return a list of them
 def get_foil_wildcards_in_set(set_code: str) -> list:
     cards = []
     for i in jdata:
