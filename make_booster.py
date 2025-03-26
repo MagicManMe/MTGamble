@@ -1,13 +1,14 @@
-#All this does is take the json and make a nice pretty dictionary that has all the set names('set-name') and their associated setcodes('set')
-
 #DOES NOT INCLUDE SPECIAL RARITY CARDS IDK WHAT THEY ARE
 
 import json
 import random
-from multiprocessing.sharedctypes import synchronized
-from random import randint
+import os
+from scryfall_api import make_default_cards_json
 
-CARD_FILE = 'cards/default-cards-20250325090811.json'
+CARD_FILE = 'cards/default_cards.json'
+if not os.path.exists(CARD_FILE):
+    print('Missing Card File, downloading from scryfall...')
+    make_default_cards_json()
 
 with open(CARD_FILE, 'r', encoding='utf-8') as file:
     jdata = json.load(file)

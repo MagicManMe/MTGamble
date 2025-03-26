@@ -1,7 +1,7 @@
 #takes the card data file and spits it back out as pretty version
 import json
 
-CARD_FILE = 'cards/default-cards-20250325090811.json'
+CARD_FILE = 'cards/default_cards.json'
 PRETTY_FILE = 'cards/pretty.json'
 
 with open(CARD_FILE, 'r', encoding='utf-8') as file:
