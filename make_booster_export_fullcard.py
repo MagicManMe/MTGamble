@@ -1,9 +1,8 @@
-#DOES NOT INCLUDE SPECIAL RARITY CARDS IDK WHAT THEY ARE
-
 import json
 import random
 import os
 from pathlib import Path
+from datetime import datetime
 
 from scryfall_api import make_default_cards_json
 
@@ -20,16 +19,8 @@ if not os.path.exists(CARD_FILE):
 with open(CARD_FILE, 'r', encoding='utf-8') as file:
     jdata = json.load(file)
 
-#Get Full set code list and delete copies
-set_code_list = []
-
-for i in jdata:
-    set_code_list.append(i['set'])
-
-set_code_list = list(set(set_code_list))
-set_code_list.sort()
-#print(f"Number of unique sets: {len(setcodelist)}")
-
+#Checks if boosters folder exists, if not create it
+Path("boosters").mkdir(parents=True, exist_ok=True)
 
 #Get Full set name list and delete copies
 set_name_list = []
@@ -54,21 +45,14 @@ def get_set_dict():
 
 #Call and print the set code for a given set name
 sets = get_set_dict()
-#print(sets['Time Spiral'])
 
-#Get all cards in a set and return a list of them
+#Get all cards in a set and return a list of the card objects
 def get_cards_in_set(set_code: str) -> list:
     cards = []
     for i in jdata:
         if i['set'] == set_code:
-            cards.append(i['name'])
+            cards.append(i)
     return cards
-
-'''
-timespiral_cards = get_cards_in_set(sets['Time Spiral'])
-print(timespiral_cards)
-print(len(timespiral_cards))
-'''
 
 #Get all commons in a set and return a list of them
 def get_common_cards_in_set(set_code: str) -> list:
@@ -77,7 +61,7 @@ def get_common_cards_in_set(set_code: str) -> list:
         if i['set'] == set_code:
             if i['rarity'] == 'common':
                 if i['name'] not in ('Forest', 'Plains', 'Island', 'Mountain', 'Swamp'):
-                    cards.append(i['name'])
+                    cards.append(i)
     return cards
 
 #Get all uncommons in a set and return a list of them
@@ -87,7 +71,7 @@ def get_uncommon_cards_in_set(set_code: str) -> list:
         if i['set'] == set_code:
             if i['rarity'] == 'uncommon':
                 if i['name'] not in ('Forest', 'Plains', 'Island', 'Mountain', 'Swamp'):
-                    cards.append(i['name'])
+                    cards.append(i)
     return cards
 
 #Get all rares in a set and return a list of them
@@ -97,7 +81,7 @@ def get_rare_cards_in_set(set_code: str) -> list:
         if i['set'] == set_code:
             if i['rarity'] == 'rare':
                 if i['name'] not in ('Forest', 'Plains', 'Island', 'Mountain', 'Swamp'):
-                    cards.append(i['name'])
+                    cards.append(i)
     return cards
 
 #Get all mythic rares in a set and return a list of them
@@ -107,7 +91,7 @@ def get_mythic_cards_in_set(set_code: str) -> list:
         if i['set'] == set_code:
             if i['rarity'] == 'mythic':
                 if i['name'] not in ('Forest', 'Plains', 'Island', 'Mountain', 'Swamp'):
-                    cards.append(i['name'])
+                    cards.append(i)
     return cards
 
 #Get all lands in a set and return a list of them
@@ -116,7 +100,7 @@ def get_lands_in_set(set_code: str) -> list:
     for i in jdata:
         if i['set'] == set_code:
             if i['type_line'] in ('Basic Land — Forest', 'Basic Land — Plains', 'Basic Land — Island', 'Basic Land — Mountain', 'Basic Land — Swamp'):
-                cards.append(i['name'])
+                cards.append(i)
     return cards
 
 #Get all non-foil wildcards in a set and return a list of them
@@ -125,7 +109,7 @@ def get_nonfoil_wildcards_in_set(set_code: str) -> list:
     for i in jdata:
         if i['set'] == set_code:
             if i['nonfoil']:
-                cards.append(i['name'])
+                cards.append(i)
     return cards
 
 #Get all foil wildcards in a set and return a list of them
@@ -134,9 +118,10 @@ def get_foil_wildcards_in_set(set_code: str) -> list:
     for i in jdata:
         if i['set'] == set_code:
             if i['foil'] == True:
-                cards.append(i['name'])
+                cards.append(i)
     return cards
 
+#makes a booster pack and returns a list of the card objects
 def make_play_booster(set_name: str):
     booster = []
 
@@ -167,11 +152,25 @@ def make_play_booster(set_name: str):
     #get foil wildcard
     booster.append(random.choice(get_foil_wildcards_in_set(sets[set_name])))
 
+    #this is where the token would be added, but i didnt do that
+
     return booster
 
-#Examples
-print(sets)
-print(make_play_booster('Aetherdrift'))
-print(get_cards_in_set('war'))
-print(get_cards_in_set(sets['Guilds of Ravnica']))
+#Creates a booster pack and saves it to a json file
+def export_play_booster(set_name: str):
+    #Makes the booster pack
+    booster = make_play_booster(set_name)
 
+    #Creates a unique filename, so you don't overwrite any boosters you've made
+    time_now = datetime.now().strftime("%Y_%m_%d-%H_%M_%S")
+    JSON_NAME = f"boosters/{set_name} Booster {time_now}.json"
+
+    #Saves the booster pack to a json file
+    with open(JSON_NAME, 'w', encoding='utf-8') as file:
+        #json.dump([card for card in booster], file, indent=4, ensure_ascii=False)
+        json.dump(booster, file)
+
+    print(f'Exported Booster Pack to {JSON_NAME}')
+
+#Example of exporting booster
+export_play_booster('Aetherdrift')
