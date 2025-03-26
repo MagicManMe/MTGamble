@@ -3,11 +3,18 @@
 import json
 import random
 import os
+from pathlib import Path
+
 from scryfall_api import make_default_cards_json
 
+#Check if the cards folder exists, if not create it
+Path("cards").mkdir(parents=True, exist_ok=True)
+
+#Check if card file exists, if not download it
 CARD_FILE = 'cards/default_cards.json'
 if not os.path.exists(CARD_FILE):
     print('Missing Card File, downloading from scryfall...')
+
     make_default_cards_json()
 
 with open(CARD_FILE, 'r', encoding='utf-8') as file:
