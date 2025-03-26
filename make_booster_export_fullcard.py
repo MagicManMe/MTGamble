@@ -187,16 +187,18 @@ def export_play_booster(set_name: str):
 
 #The Clayton booster function, uses lower_sets and casefold to be case insensitive
 def make_clayton_booster(set_name: str, booster_type: str) -> list[dict] | None:
+    #This checks if the provided set_name is a valid set, casefold() makes everything lowercase so the input can be case insensitive
     if set_name.casefold() not in lower_sets.keys():
-        print('Not a valid set, please try again')
+        #Raise an Exception if the set_name is invalid
+        raise Exception(f"Invalid set name: {set_name.casefold()}")
     else:
-        print('wow its a set')
         match booster_type.casefold():
             case 'play':
+                #Call the make booster function, pass it lower_sets[set_name.casefold()] which gets the setcode from the setname while being case insensitive
                 return make_play_booster(lower_sets[set_name.casefold()])
 
-        print('Not a valid booster type, please try again')
-        return None
+        #Raise an exception if the booster_type is invalid
+        raise Exception(f"Invalid booster type: {booster_type.casefold()}")
 
 
 
