@@ -161,4 +161,9 @@ def make_play_booster(set_name: str):
 
     return booster
 
-make_play_booster(sets['Time Spiral'])
+#Examples
+print(sets)
+print(make_play_booster('Aetherdrift'))
+print(get_cards_in_set('war'))
+print(get_cards_in_set(sets['Guilds of Ravnica']))
+

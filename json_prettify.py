@@ -12,4 +12,3 @@ cards_text = json.dumps(data, indent=2)
 with open(PRETTY_FILE, 'w', encoding='utf-8') as file:
     file.write(cards_text)
 
-
