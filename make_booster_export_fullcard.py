@@ -168,11 +168,11 @@ def make_play_booster(set_code: str):
 #Creates a booster pack and saves it to a json file
 def export_play_booster(set_name: str):
     #Makes the booster pack
-    booster = make_play_booster(set_name)
+    booster = make_play_booster(lower_sets[set_name.casefold()])
 
     #Creates a unique filename, so you don't overwrite any boosters you've made
     time_now = datetime.now().strftime("%Y_%m_%d-%H_%M_%S")
-    JSON_NAME = f"boosters/{set_name} Booster {time_now}.json"
+    JSON_NAME = f"boosters/{set_name.casefold()} Booster {time_now}.json"
 
     #Saves the booster pack to a json file
     with open(JSON_NAME, 'w', encoding='utf-8') as file:
