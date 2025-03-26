@@ -4,9 +4,12 @@
 
 import json
 import random
+from multiprocessing.sharedctypes import synchronized
 from random import randint
 
-with open('cards/default-cards-20250325090811.json', 'r', encoding='utf-8') as file:
+CARD_FILE = 'cards/default-cards-20250325090811.json'
+
+with open(CARD_FILE, 'r', encoding='utf-8') as file:
     jdata = json.load(file)
 
 #Get Full set code list and delete copies
@@ -126,7 +129,6 @@ def get_foil_wildcards_in_set(set_code: str) -> list:
                 cards.append(i['name'])
     return cards
 
-
 def make_play_booster(set_name: str):
     booster = []
 
@@ -159,4 +161,4 @@ def make_play_booster(set_name: str):
 
     return booster
 
-
+make_play_booster(sets['Time Spiral'])
