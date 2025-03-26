@@ -6,6 +6,8 @@ import os
 from scryfall_api import make_default_cards_json
 
 CARD_FILE = 'cards/default_cards.json'
+rarity_List = ('common', 'uncommon', 'rare', 'mythic')
+
 if not os.path.exists(CARD_FILE):
     print('Missing Card File, downloading from scryfall...')
     make_default_cards_json()
@@ -113,28 +115,30 @@ def get_lands_in_set(set_code: str) -> list:
     return cards
 
 #Get all non-foil wildcards in a set and return a list of them
-def get_nonfoil_wildcards_in_set(set_code: str) -> list:
+def get_nonfoil_wildcards_in_set(set_code: str, rarity: str) -> list:
     cards = []
     for i in jdata:
         if i['set'] == set_code:
-            if i['nonfoil']:
-                cards.append(i['name'])
+            if i['rarity'] == rarity:
+                if i['nonfoil']:
+                    cards.append(i['name'])
     return cards
 
 #Get all foil wildcards in a set and return a list of them
-def get_foil_wildcards_in_set(set_code: str) -> list:
+def get_foil_wildcards_in_set(set_code: str, rarity: str) -> list:
     cards = []
     for i in jdata:
         if i['set'] == set_code:
-            if i['foil'] == True:
-                cards.append(i['name'])
+            if i ['rarity'] == rarity:
+                if i['foil'] == True:
+                    cards.append(i['name'])
     return cards
 
 def make_play_booster(set_name: str):
     booster = []
 
     #get commons
-    for i in range(7):
+    for i in range(6):
         card = random.choice(get_common_cards_in_set(sets[set_name]))
         booster.append(card)
 
@@ -144,27 +148,35 @@ def make_play_booster(set_name: str):
         booster.append(card)
 
     #get rare/mythic rare
-
-    for i in range(2):
-        if random.randint(0, 1) == 0:
-            booster.append(random.choice(get_rare_cards_in_set(sets[set_name])))
-        else:
-            booster.append(random.choice(get_mythic_cards_in_set(sets[set_name])))
+    rare_For_Pack = random.choices(rarity_List, weights = [0, 0, 87.5, 12.5])
+    print(rare_For_Pack)
+    if rare_For_Pack == ['rare']:
+        booster.append(random.choice(get_rare_cards_in_set(sets[set_name])))
+        print('ooh a rare')
+    else:
+        booster.append(random.choice(get_mythic_cards_in_set(sets[set_name])))
+        print('ooh a mythic')
 
     #get land
     booster.append(random.choice(get_lands_in_set(sets[set_name])))
 
     #get non-foil wildcard
-    booster.append(random.choice(get_nonfoil_wildcards_in_set(sets[set_name])))
+    rarity_For_Wild_NF = random.choices(rarity_List, weights = [35.2, 25.66, 4.73, 4.93])
+    print(rarity_For_Wild_NF)
+    booster.append(random.choice(get_nonfoil_wildcards_in_set(sets[set_name], rarity_For_Wild_NF[0])))
+
 
     #get foil wildcard
-    booster.append(random.choice(get_foil_wildcards_in_set(sets[set_name])))
+
+    rarity_For_Wild_F = random.choices(rarity_List, weights = [35.2, 25.66, 4.73, 4.93])
+    booster.append(random.choice(get_foil_wildcards_in_set(sets[set_name], rarity_For_Wild_F[0])))
+    print(rarity_For_Wild_F)
 
     return booster
 
 #Examples
-print(sets)
+#print(sets)
 print(make_play_booster('Aetherdrift'))
-print(get_cards_in_set('war'))
-print(get_cards_in_set(sets['Guilds of Ravnica']))
+#print(get_cards_in_set('war'))
+#print(get_cards_in_set(sets['Guilds of Ravnica']))
 
