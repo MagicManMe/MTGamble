@@ -192,19 +192,26 @@ def make_play_booster(set_name: str):
 def make_Card_Sheet_Common(set_Name: str):
     sheet = get_common_cards_in_set(sets[set_Name])
     sheet_Length = len(sheet)
-    rows = find_Greatest_Common_Factor(sheet_Length)
-    columns = sheet_Length//rows
+    columns = factoring_Easy_Peasy(sheet_Length)
+    rows = sheet_Length//columns
     collation = collation_Sim(rows,columns,sheet)
     return collation
 
-#finds the greatest common factor of a number up to 16
-def find_Greatest_Common_Factor(length: int):
-    greatest_Common_Factor = 0
-    for i in range(16):
+#find the factors with the smallest difference
+def factoring_Easy_Peasy(length: int):
+    factors= []
+    differences = []
+    factor_To_Send: int
+    for i in range(length):
         if i > 0:
-            if length % i == 0 and  i != 1 and i != length and i > greatest_Common_Factor and length/i <= i:
-                greatest_Common_Factor = i
-    return greatest_Common_Factor
+            if i not in [1,length]:
+                if length % i == 0 and length/i not in factors:
+                    factors.append(i)
+    for i in range (len(factors)):
+        differences.append(length // factors[i])
+    index_For_Factor = differences.index(min(differences))
+    factor_To_Send = factors[index_For_Factor]
+    return factor_To_Send
 
 #Simulates the manufacturing process of cards
 #pretends the cards are placed in a grid and takes the first card in the last row and stacks
