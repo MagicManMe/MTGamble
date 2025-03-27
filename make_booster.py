@@ -155,8 +155,6 @@ def make_play_booster(set_name: str):
     for i in range(6):
         if card_To_Add + common_Start_Index <= len(common_Sheet) - 1 and loop_Common == 0:
             booster.append(common_Sheet[common_Start_Index + card_To_Add])
-            print (common_Start_Index + i)
-            print(card_To_Add)
             card_To_Add += 1
         else:
             loop_Common = 1
@@ -171,27 +169,22 @@ def make_play_booster(set_name: str):
 
     #get rare/mythic rare
     rare_For_Pack = random.choices(rarity_List, weights = [0, 0, 87.5, 12.5])
-    print(rare_For_Pack)
     if rare_For_Pack == ['rare']:
         booster.append(random.choice(get_rare_cards_in_set(sets[set_name])))
-        print('ooh a rare')
     else:
         booster.append(random.choice(get_mythic_cards_in_set(sets[set_name])))
-        print('ooh a mythic')
 
     #get land
     booster.append(random.choice(get_lands_in_set(sets[set_name])))
 
     #get non-foil wildcard
     rarity_For_Wild_NF = random.choices(rarity_List, weights = [33.3, 36.7, 17.5, 7.5])
-    print(rarity_For_Wild_NF)
     booster.append(random.choice(get_nonfoil_wildcards_in_set(sets[set_name], rarity_For_Wild_NF[0])))
 
 
     #get foil wildcard
     rarity_For_Wild_F = random.choices(rarity_List, weights = [33.3, 36.7, 17.5, 7.5])
     booster.append(random.choice(get_foil_wildcards_in_set(sets[set_name], rarity_For_Wild_F[0])))
-    print(rarity_For_Wild_F)
 
     return booster
 
@@ -214,6 +207,10 @@ def find_Greatest_Common_Factor(length: int):
     return greatest_Common_Factor
 
 #Simulates the manufacturing process of cards
+#pretends the cards are placed in a grid and takes the first card in the last row and stacks
+#the card above it on top, and does this from 3-5 times before moving to the next column,
+#then it stacks those piles where the left is the bottom and the right is the top,
+#the process then repeats until all the rows have been stacked
 def collation_Sim(rows: int, columns: int,sheet):
     sheet_Length = len(sheet) - 1
     collation = []
