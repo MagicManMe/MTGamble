@@ -142,7 +142,7 @@ def make_play_booster(set_code: str):
                 booster.append(common_Sheet[common_Start_Index])
                 card_To_Add += 1
         else:
-            card_Seven = random.choices(slot_Seven, weights = [87.5, 11112.5])
+            card_Seven = random.choices(slot_Seven, weights = [87.5, 12.5])
             if card_Seven == ['common']:
                 if card_To_Add + common_Start_Index <= len(common_Sheet) - 1:
                     booster.append(common_Sheet[common_Start_Index + card_To_Add])
