@@ -11,6 +11,17 @@ CARD_FILE = 'cards/default_cards.json'
 rarity_List = ('common', 'uncommon', 'rare', 'mythic')
 slot_Seven = ['common', 'list']
 list_Rarity = ['common','uncommon', 'rare', 'mythic', 'Special Guests']
+set_Codes_With_Guests = ['lci','mkm','otj','mh3','blb','dsc','fdn','dft','ktk']
+lci_Special_Guests = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','17a','17b','17c','17d','17e','17f','18',]
+mkm_Special_Guests = list(map(str, (range(19,28))))
+otj_Special_Guests = list(map(str, (range(29,38))))
+mh3_Special_Guests = list(map(str, (range(39,48))))
+blb_Special_Guests = list(map(str, (range(54,63))))
+dsc_Special_Guests = list(map(str, (range(64,73))))
+fdn_Special_Guests = list(map(str, (range(74,83))))
+dft_Special_Guests = list(map(str, (range(84,93))))
+ktk_Special_Guests = list(map(str, (range(104,118))))
+
 
 if not os.path.exists(CARD_FILE):
     print('Missing Card File, downloading from scryfall...')
@@ -75,10 +86,11 @@ def get_rarity_cards_in_set(set_code: str, rarity: str) -> list:
     for i in jdata:
         if i['set'] == set_code:
             if i['rarity'] == rarity:
-                if i['border_color'] != 'borderless':
+                if i['border_color'] not in ('borderless', 'yellow'):
                     if i['nonfoil']:
-                        if i['name'] not in ('Forest', 'Plains', 'Island', 'Mountain', 'Swamp'):
-                            cards.append(i)
+                        if i['promo'] is False:
+                            if i['name'] not in ('Forest', 'Plains', 'Island', 'Mountain', 'Swamp'):
+                                cards.append(i)
     return cards
 
 #Get all lands in a set and return a list of them
@@ -112,58 +124,106 @@ def get_foil_wildcards_in_set(set_code: str, rarity: str) -> list:
 
 def get_List_Card(set_code: str):
     cards = []
-    rarity = random.choices(list_Rarity, weights = [37.52, 37.52, 6.24, 6.24, 12.48])
+    if set_code in set_Codes_With_Guests:
+        rarity = random.choices(list_Rarity, weights = [37.52, 37.52, 6.24, 6.24, 12.48])
+    else:
+        rarity = random.choices(list_Rarity, weights=[42.87, 42.87, 7.13, 7.13, 0])
     for i in jdata:
-        if i['set'] == 'plst':
-            if rarity != ['Special Guests']:
+        if rarity != ['Special Guests']:
+            if i['set'] == 'plst':
                 if i['rarity'] == rarity[0]:
-
                     cards.append(i)
+        else:
+            if i['set'] == 'spg':
+                if set_code == 'lci':
+                    if i['collector_number'] in lci_Special_Guests:
+                        cards.append(i)
+                elif set_code == 'mkm':
+                    if i['collector_number'] in mkm_Special_Guests:
+                        cards.append(i)
+                elif set_code == 'otj':
+                    if i['collector_number'] in otj_Special_Guests:
+                        cards.append(i)
+                elif set_code == 'mh3':
+                    if i['collector_number'] in otj_Special_Guests:
+                        cards.append(i)
+                elif set_code == 'blb':
+                    if i['collector_number'] in blb_Special_Guests:
+                        cards.append(i)
+                elif set_code == 'dsc':
+                    if i['collector_number'] in dsc_Special_Guests:
+                        cards.append(i)
+                elif set_code == 'fdn':
+                    if i['collector_number'] in fdn_Special_Guests:
+                        cards.append(i)
+                elif set_code == 'dft':
+                    if i['collector_number'] in dft_Special_Guests:
+                        cards.append(i)
+                elif set_code == 'ktk':
+                    if i['collector_number'] in ktk_Special_Guests:
+                        cards.append(i)
+
     return cards
 
 
 
 def make_play_booster(set_code: str):
     booster = []
-    common_Sheet = make_Card_Sheet_Common(set_code)
+    rare_For_Pack = random.choices(rarity_List, weights=[0, 0, 87.5, 12.5])
+    common_Sheet = make_Card_Sheet(set_code, 'common')
+    uncommon_Sheet = make_Card_Sheet(set_code, 'uncommon')
     common_Start_Card = random.choice(common_Sheet)
-    common_Start_Index = common_Sheet.index(common_Start_Card)
+    start_Index = common_Sheet.index(common_Start_Card)
     card_To_Add = 0
+
 
     #get commons
     for i in range(7):
         if i != 6:
-            if card_To_Add + common_Start_Index <= len(common_Sheet) - 1:
-                booster.append(common_Sheet[common_Start_Index + card_To_Add])
+            if card_To_Add + start_Index <= len(common_Sheet) - 1:
+                booster.append(common_Sheet[start_Index + card_To_Add])
                 card_To_Add += 1
             else:
-                common_Start_Index = 0
+                start_Index = 0
                 card_To_Add = 0
-                booster.append(common_Sheet[common_Start_Index])
+                booster.append(common_Sheet[start_Index])
                 card_To_Add += 1
         else:
             card_Seven = random.choices(slot_Seven, weights = [87.5, 12.5])
             if card_Seven == ['common']:
-                if card_To_Add + common_Start_Index <= len(common_Sheet) - 1:
-                    booster.append(common_Sheet[common_Start_Index + card_To_Add])
+                if card_To_Add + start_Index <= len(common_Sheet) - 1:
+                    booster.append(common_Sheet[start_Index + card_To_Add])
                 else:
-                    common_Start_Index = 0
-                    booster.append(common_Sheet[common_Start_Index])
+                    start_Index = 0
+                    booster.append(common_Sheet[start_Index])
             else:
                 booster.append(random.choice(get_List_Card(set_code)))
 
 
     #get uncommons
+    print(len(uncommon_Sheet))
+    uncommon_Start_Card = random.choice(uncommon_Sheet)
+    start_Index = uncommon_Sheet.index(uncommon_Start_Card)
     for i in range(3):
-        card = random.choice(get_rarity_cards_in_set(set_code, 'uncommon'))
-        booster.append(card)
+        if card_To_Add + start_Index <= len(uncommon_Sheet) - 1:
+            booster.append(uncommon_Sheet[start_Index + card_To_Add])
+            card_To_Add += 1
+        else:
+            start_Index = 0
+            card_To_Add = 0
+            booster.append(uncommon_Sheet[start_Index])
+            card_To_Add += 1
 
     #get rare/mythic rare
-    rare_For_Pack = random.choices(rarity_List, weights = [0, 0, 87.5, 12.5])
+    rare_For_Pack = random.choices(rarity_List, weights=[0, 0, 87.5, 12.5])
     if rare_For_Pack == ['rare']:
-        booster.append(random.choice(get_rarity_cards_in_set(set_code, 'rare')))
+        rare_Sheet = make_Card_Sheet(set_code, 'rare')
+        print(len(rare_Sheet))
+        booster.append(random.choice(rare_Sheet))
     else:
-        booster.append(random.choice(get_rarity_cards_in_set(set_code, 'mythic')))
+        mythic_Sheet = make_Card_Sheet(set_code, 'mythic')
+        print(len(mythic_Sheet))
+        booster.append(random.choice(mythic_Sheet))
 
     #get land
     booster.append(random.choice(get_lands_in_set(set_code)))
@@ -183,6 +243,14 @@ def make_play_booster(set_code: str):
 #makes a sheet of common cards
 def make_Card_Sheet_Common(set_code: str):
     sheet = get_rarity_cards_in_set(set_code, 'common')
+    sheet_Length = len(sheet)
+    columns = factoring_Easy_Peasy(sheet_Length)
+    rows = sheet_Length//columns
+    collation = collation_Sim(rows,columns,sheet)
+    return collation
+
+def make_Card_Sheet(set_code: str, rarity: str):
+    sheet = get_rarity_cards_in_set(set_code, rarity)
     sheet_Length = len(sheet)
     columns = factoring_Easy_Peasy(sheet_Length)
     rows = sheet_Length//columns
@@ -281,4 +349,3 @@ with open('test.json', 'w') as outfile:
 #print(get_cards_in_set(sets['Guilds of Ravnica']))
 #print(make_Card_Sheet_Common('Aetherdrift'))
 
-print(len(b))
