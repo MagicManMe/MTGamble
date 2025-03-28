@@ -1,9 +1,14 @@
+import os
+
 import requests
 import json
 
 OUTFILE_NAME = 'cards/default_cards.json'
+CARDS_FOLDER = 'cards'
 
 def make_default_cards_json():
+    os.makedirs(CARDS_FOLDER, exist_ok=True)
+
     # Call the scryfall bulk data api, and retrieve the download link to default_cards and store it in SCRYFALL_URL
     r = requests.get('https://api.scryfall.com/bulk-data')
     bulk_data_json = r.json()
