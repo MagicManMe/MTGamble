@@ -47,20 +47,16 @@ print(html_content)
 
 
 
-
-poop = 0
+#Debug stuff
+"""poop = 0
 while poop == 0:
-    """for card in booster:
-        if int(card['collector_number']) in range(292,332):
-            poop = 1
-            break"""
 
 
     for i in range(6):
         if int(booster[i]['collector_number']) in range(292,332):
             poop = 1
             break
-    booster = make_clayton_booster('dft', 'play')
+    booster = make_clayton_booster('dft', 'play')"""
 
 
 # Save the HTML file
