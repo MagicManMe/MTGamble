@@ -9,7 +9,7 @@ ART_TYPES = Literal["small", "normal", "large", "png", "art_crop", "border_crop"
 
 #Function that takes in a booster and returns the html string, can be saved to an HTML file if wanted for viewing
 #Currently shows export to file at bottom of booster_html.py
-def booster_to_html(booster: list[dict], art_type: ART_TYPES = 'normal') -> str: #art_type is optional, defaults is 'normal' if not specified
+def booster_to_html(booster: list[dict], art_type: ART_TYPES = 'normal') -> str:
     # Generate HTML content
     html_content = """
     <!DOCTYPE html>
@@ -19,9 +19,19 @@ def booster_to_html(booster: list[dict], art_type: ART_TYPES = 'normal') -> str:
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Booster Pack Art</title>
         <style>
-            body { font-family: Arial, sans-serif; text-align: center; }
-            .card-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
-            img { width: 250px; height: auto; border-radius: 10px; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2); }
+            body { font-family: Arial, sans-serif; text-align: center; background-color: #f5f5f5; }
+            .card-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; padding: 20px; }
+            img { 
+                width: 250px; 
+                height: auto; 
+                border-radius: 10px; 
+                box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+            img:hover {
+                transform: scale(1.1);
+                box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+            }
         </style>
     </head>
     <body>
@@ -32,7 +42,7 @@ def booster_to_html(booster: list[dict], art_type: ART_TYPES = 'normal') -> str:
     # Fetch images and add them to HTML
     for card in booster:
         image_url = card['image_uris'][art_type]
-        html_content += f'<img src="{image_url}" alt="Card Image">\n'
+        html_content += f'<img src="{image_url}" alt="Card Image">'
 
     # Close HTML content
     html_content += """
@@ -61,7 +71,7 @@ if __name__ == '__main__':
     write_booster_to_file(b, 'booster_pack.html')
 
     #Open the HTML file in the default web browser
-    #webbrowser.open('booster_pack.html')
+    webbrowser.open('booster_pack.html')
 
     # Debug stuff
     """poop = 0
