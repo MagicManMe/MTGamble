@@ -1,14 +1,15 @@
 import webbrowser
-
-from make_booster import make_clayton_booster
 import json
+from make_booster import make_clayton_booster
+from typing import Literal
+
+#list of card art types for type hinting in below function
+ART_TYPES = Literal["small", "normal", "large", "png", "art_crop", "border_crop"]
 
 
 #Function that takes in a booster and returns the html string, can be saved to an HTML file if wanted for viewing
 #Currently shows export to file at bottom of booster_html.py
-def booster_to_html(booster: list, art_type: str = 'normal') -> str:
-
-
+def booster_to_html(booster: list[dict], art_type: ART_TYPES = 'normal') -> str: #art_type is optional, defaults is 'normal' if not specified
     # Generate HTML content
     html_content = """
     <!DOCTYPE html>
@@ -42,8 +43,9 @@ def booster_to_html(booster: list, art_type: str = 'normal') -> str:
 
     return html_content
 
-#Function to write a booster to a file for debugging purposes
-def write_booster_to_file(booster: list, filename: str, art_type: str = 'normal'):
+
+#Function to write a booster to a file for debugging purposes, art_type is optional
+def write_booster_to_file(booster: list[dict], filename: str, art_type: ART_TYPES = 'normal'):
     html_content = booster_to_html(booster, art_type)
     with open(filename, 'w', encoding='utf-8') as file:
         file.write(html_content)
@@ -51,25 +53,21 @@ def write_booster_to_file(booster: list, filename: str, art_type: str = 'normal'
 
 
 
-#Debug stuff
-"""poop = 0
-while poop == 0:
-
-
-    for i in range(6):
-        if int(booster[i]['collector_number']) in range(292,332):
-            poop = 1
-            break
-    booster = make_clayton_booster('dft', 'play')"""
-
-
 #Makes it so this only runs when we run this file, not when we import it to use booster_to_html function
 if __name__ == '__main__':
     #Make a booster
-    b = make_clayton_booster('dft','play')
-
+    b = make_clayton_booster('dft', 'play')
     #write that booster to html file
     write_booster_to_file(b, 'booster_pack.html')
 
-    # Open the HTML file in the default web browser
+    #Open the HTML file in the default web browser
     #webbrowser.open('booster_pack.html')
+
+    # Debug stuff
+    """poop = 0
+    while poop == 0:
+        for i in range(6):
+            if int(booster[i]['collector_number']) in range(292,332):
+                poop = 1
+                break
+        booster = make_clayton_booster('dft', 'play')"""
