@@ -113,12 +113,11 @@ def get_foil_wildcards_in_set(set_code: str, rarity: str) -> list:
 def get_List_Card(set_code: str):
     cards = []
     rarity = random.choices(list_Rarity, weights = [37.52, 37.52, 6.24, 6.24, 12.48])
-    print(rarity)
     for i in jdata:
-        if rarity != ['Special Guests']:
-            if i['set'] == ['The List']:
-                print('not a guest')
-                if i['rarity'] == rarity:
+        if i['set'] == 'plst':
+            if rarity != ['Special Guests']:
+                if i['rarity'] == rarity[0]:
+
                     cards.append(i)
     return cards
 
@@ -127,7 +126,6 @@ def get_List_Card(set_code: str):
 def make_play_booster(set_code: str):
     booster = []
     common_Sheet = make_Card_Sheet_Common(set_code)
-    print(common_Sheet)
     common_Start_Card = random.choice(common_Sheet)
     common_Start_Index = common_Sheet.index(common_Start_Card)
     card_To_Add = 0
@@ -144,7 +142,7 @@ def make_play_booster(set_code: str):
                 booster.append(common_Sheet[common_Start_Index])
                 card_To_Add += 1
         else:
-            card_Seven = random.choices(slot_Seven, weights = [87.5, 12.5])
+            card_Seven = random.choices(slot_Seven, weights = [87.5, 11112.5])
             if card_Seven == ['common']:
                 if card_To_Add + common_Start_Index <= len(common_Sheet) - 1:
                     booster.append(common_Sheet[common_Start_Index + card_To_Add])
@@ -152,7 +150,7 @@ def make_play_booster(set_code: str):
                     common_Start_Index = 0
                     booster.append(common_Sheet[common_Start_Index])
             else:
-                get_List_Card(set_code)
+                booster.append(random.choice(get_List_Card(set_code)))
 
 
     #get uncommons
@@ -233,7 +231,6 @@ def collation_Sim(rows: int, columns: int,sheet):
         if row_To_Stop > rows:
             rows_Per_Column = rows - (row_To_Stop - rows_Per_Column)
             row_To_Stop = rows
-    print(len(collation))
     return collation
 
 # Creates a booster pack and saves it to a json file
