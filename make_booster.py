@@ -58,7 +58,7 @@ def get_cards_in_set(set_code: str) -> list:
     cards = []
     for i in jdata:
         if i['set'] == set_code:
-            cards.append(i['name'])
+            cards.append(i)
     return cards
 
 '''
@@ -76,7 +76,7 @@ def get_rarity_cards_in_set(set_code: str, rarity: str) -> list:
                 if i['border_color'] != ('borderless'):
                     if i['nonfoil']:
                         if i['name'] not in ('Forest', 'Plains', 'Island', 'Mountain', 'Swamp'):
-                            cards.append(i['name'])
+                            cards.append(i)
     return cards
 
 #Get all lands in a set and return a list of them
@@ -85,7 +85,7 @@ def get_lands_in_set(set_code: str) -> list:
     for i in jdata:
         if i['set'] == set_code:
             if i['type_line'] in ('Basic Land — Forest', 'Basic Land — Plains', 'Basic Land — Island', 'Basic Land — Mountain', 'Basic Land — Swamp'):
-                cards.append(i['name'])
+                cards.append(i)
     return cards
 
 #Get all non-foil wildcards in a set and return a list of them
@@ -95,7 +95,7 @@ def get_nonfoil_wildcards_in_set(set_code: str, rarity: str) -> list:
         if i['set'] == set_code:
             if i['rarity'] == rarity:
                 if i['nonfoil']:
-                    cards.append(i['name'])
+                    cards.append(i)
     return cards
 
 #Get all foil wildcards in a set and return a list of them
@@ -105,7 +105,7 @@ def get_foil_wildcards_in_set(set_code: str, rarity: str) -> list:
         if i['set'] == set_code:
             if i['rarity'] == rarity:
                 if i['foil'] == True:
-                    cards.append(i['name'])
+                    cards.append(i)
     return cards
 
 def get_List_Card(set_code: str):
@@ -117,14 +117,14 @@ def get_List_Card(set_code: str):
             if i['set'] == ['The List']:
                 print('not a guest')
                 if i['rarity'] == rarity:
-                    cards.append(i['name'])
+                    cards.append(i)
     return cards
 
 
 
-def make_play_booster(set_name: str):
+def make_play_booster(set_code: str):
     booster = []
-    common_Sheet = make_Card_Sheet_Common(set_name)
+    common_Sheet = make_Card_Sheet_Common(set_code)
     print(common_Sheet)
     common_Start_Card = random.choice(common_Sheet)
     common_Start_Index = common_Sheet.index(common_Start_Card)
@@ -150,40 +150,40 @@ def make_play_booster(set_name: str):
                     common_Start_Index = 0
                     booster.append(common_Sheet[common_Start_Index])
             else:
-                get_List_Card(sets[set_name])
+                get_List_Card(set_code)
 
 
 
     #get uncommons
     for i in range(3):
-        card = random.choice(get_rarity_cards_in_set(sets[set_name], 'uncommon'))
+        card = random.choice(get_rarity_cards_in_set(set_code, 'uncommon'))
         booster.append(card)
 
     #get rare/mythic rare
     rare_For_Pack = random.choices(rarity_List, weights = [0, 0, 87.5, 12.5])
     if rare_For_Pack == ['rare']:
-        booster.append(random.choice(get_rarity_cards_in_set(sets[set_name], 'rare')))
+        booster.append(random.choice(get_rarity_cards_in_set(set_code, 'rare')))
     else:
-        booster.append(random.choice(get_rarity_cards_in_set(sets[set_name], 'mythic')))
+        booster.append(random.choice(get_rarity_cards_in_set(set_code, 'mythic')))
 
     #get land
-    booster.append(random.choice(get_lands_in_set(sets[set_name])))
+    booster.append(random.choice(get_lands_in_set(set_code)))
 
     #get non-foil wildcard
     rarity_For_Wild_NF = random.choices(rarity_List, weights = [33.3, 36.7, 17.5, 7.5])
-    booster.append(random.choice(get_nonfoil_wildcards_in_set(sets[set_name], rarity_For_Wild_NF[0])))
+    booster.append(random.choice(get_nonfoil_wildcards_in_set(set_code, rarity_For_Wild_NF[0])))
 
 
     #get foil wildcard
     rarity_For_Wild_F = random.choices(rarity_List, weights = [33.3, 36.7, 17.5, 7.5])
-    booster.append(random.choice(get_foil_wildcards_in_set(sets[set_name], rarity_For_Wild_F[0])))
+    booster.append(random.choice(get_foil_wildcards_in_set(set_code, rarity_For_Wild_F[0])))
 
     return booster
 
 
 #makes a sheet of common cards
-def make_Card_Sheet_Common(set_Name: str):
-    sheet = get_rarity_cards_in_set(sets[set_Name], 'common')
+def make_Card_Sheet_Common(set_code: str):
+    sheet = get_rarity_cards_in_set(set_code, 'common')
     sheet_Length = len(sheet)
     columns = factoring_Easy_Peasy(sheet_Length)
     rows = sheet_Length//columns
@@ -238,8 +238,12 @@ def collation_Sim(rows: int, columns: int,sheet):
 
 #Examples
 #print(sets)
-print(make_play_booster('Aetherdrift'))
+#print(make_play_booster('dft'))
+b = make_play_booster('dft')
+with open('test.json', 'w') as outfile:
+    json.dump(b, outfile, indent=4)
 #print(get_cards_in_set('war'))
 #print(get_cards_in_set(sets['Guilds of Ravnica']))
 #print(make_Card_Sheet_Common('Aetherdrift'))
 
+print(len(b))
