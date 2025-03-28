@@ -252,7 +252,7 @@ def export_play_booster(set_code: str):
     print(f'Exported Booster Pack to {JSON_NAME}')
 
 
-#The Clayton booster function, uses lower_sets and casefold to be case insensitive
+#The Clayton booster function, takes in a set_code, and booster type and returns a booster pack
 def make_clayton_booster(set_code: str, booster_type: str) -> list[dict] | None:
     #Makes set_code and booster_type case-insensitive
     set_code = set_code.casefold()
@@ -271,14 +271,19 @@ def make_clayton_booster(set_code: str, booster_type: str) -> list[dict] | None:
         raise Exception(f"Invalid booster type: {booster_type}")
 
 
-#Examples
-#print(sets)
-#print(make_play_booster('dft'))
-b = make_clayton_booster('dft', 'play')
-with open('test.json', 'w') as outfile:
-    json.dump(b, outfile, indent=4)
-#print(get_cards_in_set('war'))
-#print(get_cards_in_set(sets['Guilds of Ravnica']))
-#print(make_Card_Sheet_Common('Aetherdrift'))
+#This was originally running when we just called make_clayton_booster in another file, which is bad
+#This tells the program to only run this part of the code, ONLY when we run this file.
+if __name__ == '__main__':
 
-print(len(b))
+    #Examples
+    #print(sets)
+    #print(make_play_booster('dft'))
+    b = make_clayton_booster('dft', 'play')
+    with open('test.json', 'w') as outfile:
+        json.dump(b, outfile, indent=4)
+    #print(get_cards_in_set('war'))
+    #print(get_cards_in_set(sets['Guilds of Ravnica']))
+    #print(make_Card_Sheet_Common('Aetherdrift'))
+
+    #Debug print len of booster b
+    print(len(b))
