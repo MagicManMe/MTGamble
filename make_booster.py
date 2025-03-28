@@ -7,6 +7,8 @@ from scryfall_api import make_default_cards_json
 
 CARD_FILE = 'cards/default_cards.json'
 rarity_List = ('common', 'uncommon', 'rare', 'mythic')
+slot_Seven = ['common', 'list']
+list_Rarity = ['common','uncommon', 'rare', 'mythic', 'Special Guests']
 
 if not os.path.exists(CARD_FILE):
     print('Missing Card File, downloading from scryfall...')
@@ -66,47 +68,11 @@ print(len(timespiral_cards))
 '''
 
 #Get all commons in a set and return a list of them
-def get_common_cards_in_set(set_code: str) -> list:
+def get_rarity_cards_in_set(set_code: str, rarity: str) -> list:
     cards = []
     for i in jdata:
         if i['set'] == set_code:
-            if i['rarity'] == 'common':
-                if i['border_color'] != ('borderless'):
-                    if i['nonfoil']:
-                        if i['name'] not in ('Forest', 'Plains', 'Island', 'Mountain', 'Swamp'):
-                            cards.append(i['name'])
-    return cards
-
-#Get all uncommons in a set and return a list of them
-def get_uncommon_cards_in_set(set_code: str) -> list:
-    cards = []
-    for i in jdata:
-        if i['set'] == set_code:
-            if i['rarity'] == 'uncommon':
-                if i['border_color'] != ('borderless'):
-                    if i['nonfoil']:
-                        if i['name'] not in ('Forest', 'Plains', 'Island', 'Mountain', 'Swamp'):
-                            cards.append(i['name'])
-    return cards
-
-#Get all rares in a set and return a list of them
-def get_rare_cards_in_set(set_code: str) -> list:
-    cards = []
-    for i in jdata:
-        if i['set'] == set_code:
-            if i['rarity'] == 'rare':
-                if i['border_color'] != ('borderless'):
-                    if i['nonfoil']:
-                        if i['name'] not in ('Forest', 'Plains', 'Island', 'Mountain', 'Swamp'):
-                            cards.append(i['name'])
-    return cards
-
-#Get all mythic rares in a set and return a list of them
-def get_mythic_cards_in_set(set_code: str) -> list:
-    cards = []
-    for i in jdata:
-        if i['set'] == set_code:
-            if i['rarity'] == 'mythic':
+            if i['rarity'] == rarity:
                 if i['border_color'] != ('borderless'):
                     if i['nonfoil']:
                         if i['name'] not in ('Forest', 'Plains', 'Island', 'Mountain', 'Swamp'):
@@ -137,10 +103,24 @@ def get_foil_wildcards_in_set(set_code: str, rarity: str) -> list:
     cards = []
     for i in jdata:
         if i['set'] == set_code:
-            if i ['rarity'] == rarity:
+            if i['rarity'] == rarity:
                 if i['foil'] == True:
                     cards.append(i['name'])
     return cards
+
+def get_List_Card(set_code: str):
+    cards = []
+    rarity = random.choices(list_Rarity, weights = [37.52, 37.52, 6.24, 6.24, 12.48])
+    print(rarity)
+    for i in jdata:
+        if rarity != ['Special Guests']:
+            if i['set'] == ['The List']:
+                print('not a guest')
+                if i['rarity'] == rarity:
+                    cards.append(i['name'])
+    return cards
+
+
 
 def make_play_booster(set_name: str):
     booster = []
@@ -149,30 +129,42 @@ def make_play_booster(set_name: str):
     common_Start_Card = random.choice(common_Sheet)
     common_Start_Index = common_Sheet.index(common_Start_Card)
     card_To_Add = 0
-    loop_Common = 0
 
     #get commons
-    for i in range(6):
-        if card_To_Add + common_Start_Index <= len(common_Sheet) - 1 and loop_Common == 0:
-            booster.append(common_Sheet[common_Start_Index + card_To_Add])
-            card_To_Add += 1
+    for i in range(7):
+        if i != 6:
+            if card_To_Add + common_Start_Index <= len(common_Sheet) - 1:
+                booster.append(common_Sheet[common_Start_Index + card_To_Add])
+                card_To_Add += 1
+            else:
+                common_Start_Index = 0
+                card_To_Add = 0
+                booster.append(common_Sheet[common_Start_Index])
+                card_To_Add += 1
         else:
-            loop_Common = 1
-            card_To_Add = 0
-            booster.append(common_Sheet[card_To_Add])
-            card_To_Add += 1
+            card_Seven = random.choices(slot_Seven, weights = [87.5, 12.5])
+            if card_Seven == ['common']:
+                if card_To_Add + common_Start_Index <= len(common_Sheet) - 1:
+                    booster.append(common_Sheet[common_Start_Index + card_To_Add])
+                else:
+                    common_Start_Index = 0
+                    booster.append(common_Sheet[common_Start_Index])
+            else:
+                get_List_Card(sets[set_name])
+
+
 
     #get uncommons
     for i in range(3):
-        card = random.choice(get_uncommon_cards_in_set(sets[set_name]))
+        card = random.choice(get_rarity_cards_in_set(sets[set_name], 'uncommon'))
         booster.append(card)
 
     #get rare/mythic rare
     rare_For_Pack = random.choices(rarity_List, weights = [0, 0, 87.5, 12.5])
     if rare_For_Pack == ['rare']:
-        booster.append(random.choice(get_rare_cards_in_set(sets[set_name])))
+        booster.append(random.choice(get_rarity_cards_in_set(sets[set_name], 'rare')))
     else:
-        booster.append(random.choice(get_mythic_cards_in_set(sets[set_name])))
+        booster.append(random.choice(get_rarity_cards_in_set(sets[set_name], 'mythic')))
 
     #get land
     booster.append(random.choice(get_lands_in_set(sets[set_name])))
@@ -188,14 +180,16 @@ def make_play_booster(set_name: str):
 
     return booster
 
+
 #makes a sheet of common cards
 def make_Card_Sheet_Common(set_Name: str):
-    sheet = get_common_cards_in_set(sets[set_Name])
+    sheet = get_rarity_cards_in_set(sets[set_Name], 'common')
     sheet_Length = len(sheet)
     columns = factoring_Easy_Peasy(sheet_Length)
     rows = sheet_Length//columns
     collation = collation_Sim(rows,columns,sheet)
     return collation
+
 
 #find the factors with the smallest difference
 def factoring_Easy_Peasy(length: int):
@@ -203,15 +197,15 @@ def factoring_Easy_Peasy(length: int):
     differences = []
     factor_To_Send: int
     for i in range(length):
-        if i > 0:
-            if i not in [1,length]:
-                if length % i == 0 and length/i not in factors:
-                    factors.append(i)
+        if i not in [0,1,length]:
+            if length % i == 0 and length/i not in factors:
+                factors.append(i)
     for i in range (len(factors)):
         differences.append(length // factors[i])
     index_For_Factor = differences.index(min(differences))
     factor_To_Send = factors[index_For_Factor]
     return factor_To_Send
+
 
 #Simulates the manufacturing process of cards
 #pretends the cards are placed in a grid and takes the first card in the last row and stacks
