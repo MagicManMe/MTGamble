@@ -11,6 +11,7 @@ CARD_FILE = 'cards/default_cards.json'
 rarity_List = ('common', 'uncommon', 'rare', 'mythic')
 slot_Seven = ['common', 'list']
 list_Rarity = ['common','uncommon', 'rare', 'mythic', 'Special Guests']
+set_Codes_With_Guests = ['lci','mkm','otj','mh3','blb','dsc','fdn','dft','tdm']
 
 if not os.path.exists(CARD_FILE):
     print('Missing Card File, downloading from scryfall...')
@@ -48,7 +49,6 @@ def get_set_dict():
             if i == j['set_name']:
                 setDict[i] = j['set']
                 break
-
     return setDict
 
 #Call and print the set code for a given set name
@@ -75,10 +75,11 @@ def get_rarity_cards_in_set(set_code: str, rarity: str) -> list:
     for i in jdata:
         if i['set'] == set_code:
             if i['rarity'] == rarity:
-                if i['border_color'] != 'borderless':
+                if i['border_color'] not in ('borderless', 'yellow'):
                     if i['nonfoil']:
-                        if i['name'] not in ('Forest', 'Plains', 'Island', 'Mountain', 'Swamp'):
-                            cards.append(i)
+                        if i['promo'] is False:
+                            if i['name'] not in ('Forest', 'Plains', 'Island', 'Mountain', 'Swamp'):
+                                cards.append(i)
     return cards
 
 #Get all lands in a set and return a list of them
@@ -112,83 +113,128 @@ def get_foil_wildcards_in_set(set_code: str, rarity: str) -> list:
 
 def get_List_Card(set_code: str):
     cards = []
-    rarity = random.choices(list_Rarity, weights = [37.52, 37.52, 6.24, 6.24, 12.48])
+    if set_code in set_Codes_With_Guests:
+        rarity = random.choices(list_Rarity, weights = [37.52, 37.52, 6.24, 6.24, 12.48])
+    else:
+        rarity = random.choices(list_Rarity, weights=[42.87, 42.87, 7.13, 7.13, 0])
     for i in jdata:
-        if i['set'] == 'plst':
-            if rarity != ['Special Guests']:
+        if rarity != ['Special Guests']:
+            if i['set'] == 'plst':
                 if i['rarity'] == rarity[0]:
-
                     cards.append(i)
+        else:
+            # sorts Special Guests by set
+            lci_Special_Guests = list(map(str, (range(1, 19)))) + ['17b', '17c', '17d', '17e', '17f']
+            mkm_Special_Guests = list(map(str, (range(19, 29))))
+            otj_Special_Guests = list(map(str, (range(29, 39))))
+            mh3_Special_Guests = list(map(str, (range(39, 49))))
+            blb_Special_Guests = list(map(str, (range(54, 64))))
+            dsc_Special_Guests = list(map(str, (range(64, 74))))
+            fdn_Special_Guests = list(map(str, (range(74, 84))))
+            dft_Special_Guests = list(map(str, (range(84, 94))))
+            tdm_Special_Guests = list(map(str, (range(104, 119))))
+            #Finds all the Special Guests for a given set
+            if i['set'] == 'spg':
+                if set_code == 'lci':
+                    if i['collector_number'] in lci_Special_Guests:
+                        cards.append(i)
+                elif set_code == 'mkm':
+                    if i['collector_number'] in mkm_Special_Guests:
+                        cards.append(i)
+                elif set_code == 'otj':
+                    if i['collector_number'] in otj_Special_Guests:
+                        cards.append(i)
+                elif set_code == 'mh3':
+                    if i['collector_number'] in mh3_Special_Guests:
+                        cards.append(i)
+                elif set_code == 'blb':
+                    if i['collector_number'] in blb_Special_Guests:
+                        cards.append(i)
+                elif set_code == 'dsc':
+                    if i['collector_number'] in dsc_Special_Guests:
+                        cards.append(i)
+                elif set_code == 'fdn':
+                    if i['collector_number'] in fdn_Special_Guests:
+                        cards.append(i)
+                elif set_code == 'dft':
+                    if i['collector_number'] in dft_Special_Guests:
+                        cards.append(i)
+                elif set_code == 'tdm':
+                    if i['collector_number'] in tdm_Special_Guests:
+                        cards.append(i)
     return cards
 
-
-
+#makes a Play Booster
 def make_play_booster(set_code: str):
     booster = []
-    common_Sheet = make_Card_Sheet_Common(set_code)
+    common_Sheet = make_Card_Sheet(set_code, 'common')
+    uncommon_Sheet = make_Card_Sheet(set_code, 'uncommon')
     common_Start_Card = random.choice(common_Sheet)
-    common_Start_Index = common_Sheet.index(common_Start_Card)
+    start_Index = common_Sheet.index(common_Start_Card)
     card_To_Add = 0
-
     #get commons
     for i in range(7):
         if i != 6:
-            if card_To_Add + common_Start_Index <= len(common_Sheet) - 1:
-                booster.append(common_Sheet[common_Start_Index + card_To_Add])
+            if card_To_Add + start_Index <= len(common_Sheet) - 1:
+                booster.append(common_Sheet[start_Index + card_To_Add])
                 card_To_Add += 1
             else:
-                common_Start_Index = 0
+                start_Index = 0
                 card_To_Add = 0
-                booster.append(common_Sheet[common_Start_Index])
+                booster.append(common_Sheet[start_Index])
                 card_To_Add += 1
         else:
             card_Seven = random.choices(slot_Seven, weights = [87.5, 12.5])
             if card_Seven == ['common']:
-                if card_To_Add + common_Start_Index <= len(common_Sheet) - 1:
-                    booster.append(common_Sheet[common_Start_Index + card_To_Add])
+                if card_To_Add + start_Index <= len(common_Sheet) - 1:
+                    booster.append(common_Sheet[start_Index + card_To_Add])
                 else:
-                    common_Start_Index = 0
-                    booster.append(common_Sheet[common_Start_Index])
+                    start_Index = 0
+                    booster.append(common_Sheet[start_Index])
             else:
                 booster.append(random.choice(get_List_Card(set_code)))
-
-
     #get uncommons
+    print(len(uncommon_Sheet))
+    uncommon_Start_Card = random.choice(uncommon_Sheet)
+    start_Index = uncommon_Sheet.index(uncommon_Start_Card)
     for i in range(3):
-        card = random.choice(get_rarity_cards_in_set(set_code, 'uncommon'))
-        booster.append(card)
-
+        if card_To_Add + start_Index <= len(uncommon_Sheet) - 1:
+            booster.append(uncommon_Sheet[start_Index + card_To_Add])
+            card_To_Add += 1
+        else:
+            start_Index = 0
+            card_To_Add = 0
+            booster.append(uncommon_Sheet[start_Index])
+            card_To_Add += 1
     #get rare/mythic rare
-    rare_For_Pack = random.choices(rarity_List, weights = [0, 0, 87.5, 12.5])
+    rare_For_Pack = random.choices(rarity_List, weights=[0, 0, 87.5, 12.5])
     if rare_For_Pack == ['rare']:
-        booster.append(random.choice(get_rarity_cards_in_set(set_code, 'rare')))
+        rare_Sheet = make_Card_Sheet(set_code, 'rare')
+        print(len(rare_Sheet))
+        booster.append(random.choice(rare_Sheet))
     else:
-        booster.append(random.choice(get_rarity_cards_in_set(set_code, 'mythic')))
-
+        mythic_Sheet = make_Card_Sheet(set_code, 'mythic')
+        print(len(mythic_Sheet))
+        booster.append(random.choice(mythic_Sheet))
     #get land
     booster.append(random.choice(get_lands_in_set(set_code)))
-
     #get non-foil wildcard
     rarity_For_Wild_NF = random.choices(rarity_List, weights = [33.3, 36.7, 17.5, 7.5])
     booster.append(random.choice(get_nonfoil_wildcards_in_set(set_code, rarity_For_Wild_NF[0])))
-
-
     #get foil wildcard
     rarity_For_Wild_F = random.choices(rarity_List, weights = [33.3, 36.7, 17.5, 7.5])
     booster.append(random.choice(get_foil_wildcards_in_set(set_code, rarity_For_Wild_F[0])))
 
     return booster
 
-
-#makes a sheet of common cards
-def make_Card_Sheet_Common(set_code: str):
-    sheet = get_rarity_cards_in_set(set_code, 'common')
+#makes a sheet of cards
+def make_Card_Sheet(set_code: str, rarity: str):
+    sheet = get_rarity_cards_in_set(set_code, rarity)
     sheet_Length = len(sheet)
     columns = factoring_Easy_Peasy(sheet_Length)
     rows = sheet_Length//columns
     collation = collation_Sim(rows,columns,sheet)
     return collation
-
 
 #find the factors with the smallest difference
 def factoring_Easy_Peasy(length: int):
@@ -204,7 +250,6 @@ def factoring_Easy_Peasy(length: int):
     index_For_Factor = differences.index(min(differences))
     factor_To_Send = factors[index_For_Factor]
     return factor_To_Send
-
 
 #Simulates the manufacturing process of cards
 #pretends the cards are placed in a grid and takes the first card in the last row and stacks
@@ -251,8 +296,7 @@ def export_play_booster(set_code: str):
 
     print(f'Exported Booster Pack to {JSON_NAME}')
 
-
-#The Clayton booster function, takes in a set_code, and booster type and returns a booster pack
+#The Clayton booster function, uses lower_sets and casefold to be case insensitive
 def make_clayton_booster(set_code: str, booster_type: str) -> list[dict] | None:
     #Makes set_code and booster_type case-insensitive
     set_code = set_code.casefold()
@@ -270,20 +314,13 @@ def make_clayton_booster(set_code: str, booster_type: str) -> list[dict] | None:
         #Raise an exception if the booster_type is invalid
         raise Exception(f"Invalid booster type: {booster_type}")
 
+#Examples
+#print(sets)
+#print(make_play_booster('dft'))
+b = make_clayton_booster('dft', 'play')
+with open('test.json', 'w') as outfile:
+    json.dump(b, outfile, indent=4)
+#print(get_cards_in_set('war'))
+#print(get_cards_in_set(sets['Guilds of Ravnica']))
+#print(make_Card_Sheet_Common('Aetherdrift'))
 
-#This was originally running when we just called make_clayton_booster in another file, which is bad
-#This tells the program to only run this part of the code, ONLY when we run this file.
-if __name__ == '__main__':
-
-    #Examples
-    #print(sets)
-    #print(make_play_booster('dft'))
-    b = make_clayton_booster('dft', 'play')
-    with open('test.json', 'w') as outfile:
-        json.dump(b, outfile, indent=4)
-    #print(get_cards_in_set('war'))
-    #print(get_cards_in_set(sets['Guilds of Ravnica']))
-    #print(make_Card_Sheet_Common('Aetherdrift'))
-
-    #Debug print len of booster b
-    print(len(b))
