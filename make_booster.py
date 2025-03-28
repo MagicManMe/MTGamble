@@ -11,7 +11,7 @@ CARD_FILE = 'cards/default_cards.json'
 rarity_List = ('common', 'uncommon', 'rare', 'mythic')
 slot_Seven = ['common', 'list']
 list_Rarity = ['common','uncommon', 'rare', 'mythic', 'Special Guests']
-set_Codes_With_Guests = ['lci','mkm','otj','mh3','blb','dsc','fdn','dft','ktk']
+set_Codes_With_Guests = ['lci','mkm','otj','mh3','blb','dsc','fdn','dft','tdm']
 lci_Special_Guests = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','17a','17b','17c','17d','17e','17f','18',]
 mkm_Special_Guests = list(map(str, (range(19,28))))
 otj_Special_Guests = list(map(str, (range(29,38))))
@@ -20,7 +20,7 @@ blb_Special_Guests = list(map(str, (range(54,63))))
 dsc_Special_Guests = list(map(str, (range(64,73))))
 fdn_Special_Guests = list(map(str, (range(74,83))))
 dft_Special_Guests = list(map(str, (range(84,93))))
-ktk_Special_Guests = list(map(str, (range(104,118))))
+tdm_Special_Guests = list(map(str, (range(104,118))))
 
 
 if not os.path.exists(CARD_FILE):
@@ -159,23 +159,20 @@ def get_List_Card(set_code: str):
                 elif set_code == 'dft':
                     if i['collector_number'] in dft_Special_Guests:
                         cards.append(i)
-                elif set_code == 'ktk':
-                    if i['collector_number'] in ktk_Special_Guests:
+                elif set_code == 'tdm':
+                    if i['collector_number'] in tdm_Special_Guests:
                         cards.append(i)
 
     return cards
 
-
-
+#makes a Play Booster
 def make_play_booster(set_code: str):
     booster = []
-    rare_For_Pack = random.choices(rarity_List, weights=[0, 0, 87.5, 12.5])
     common_Sheet = make_Card_Sheet(set_code, 'common')
     uncommon_Sheet = make_Card_Sheet(set_code, 'uncommon')
     common_Start_Card = random.choice(common_Sheet)
     start_Index = common_Sheet.index(common_Start_Card)
     card_To_Add = 0
-
 
     #get commons
     for i in range(7):
