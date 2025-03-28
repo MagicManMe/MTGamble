@@ -240,15 +240,7 @@ def make_play_booster(set_code: str):
     return booster
 
 
-#makes a sheet of common cards
-def make_Card_Sheet_Common(set_code: str):
-    sheet = get_rarity_cards_in_set(set_code, 'common')
-    sheet_Length = len(sheet)
-    columns = factoring_Easy_Peasy(sheet_Length)
-    rows = sheet_Length//columns
-    collation = collation_Sim(rows,columns,sheet)
-    return collation
-
+#makes a sheet of cards
 def make_Card_Sheet(set_code: str, rarity: str):
     sheet = get_rarity_cards_in_set(set_code, rarity)
     sheet_Length = len(sheet)
