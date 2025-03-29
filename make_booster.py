@@ -5,8 +5,6 @@ import random
 import os
 from datetime import datetime
 
-from setuptools.windows_support import hide_file
-
 from scryfall_api import make_default_cards_json
 
 CARD_FILE = 'cards/default_cards.json'
@@ -171,7 +169,6 @@ def get_List_Card(set_code: str):
 def make_play_booster(set_code: str):
     booster = []
     common_Sheet = make_Card_Sheet(set_code, 'common')
-    print(len(common_Sheet))
     uncommon_Sheet = make_Card_Sheet(set_code, 'uncommon')
     common_Start_Card = random.choice(common_Sheet)
     start_Index = common_Sheet.index(common_Start_Card)
