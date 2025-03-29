@@ -25,7 +25,7 @@ def get_booster_art(booster: list[dict], art_type: ART_TYPES = 'normal') -> list
 
 if __name__ == '__main__':
 
-    #Debug makes booster pack and shows each card's art
+    #Debug that makes booster pack and shows each card's art
     b = make_clayton_booster('dft', 'play')
     for image in get_booster_art(b, 'small'):
         image.show()
