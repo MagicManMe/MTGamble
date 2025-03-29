@@ -314,13 +314,15 @@ def make_clayton_booster(set_code: str, booster_type: str) -> list[dict] | None:
         #Raise an exception if the booster_type is invalid
         raise Exception(f"Invalid booster type: {booster_type}")
 
-#Examples
-#print(sets)
-#print(make_play_booster('dft'))
-b = make_clayton_booster('dft', 'play')
-with open('test.json', 'w') as outfile:
-    json.dump(b, outfile, indent=4)
-#print(get_cards_in_set('war'))
-#print(get_cards_in_set(sets['Guilds of Ravnica']))
-#print(make_Card_Sheet_Common('Aetherdrift'))
+#This will only run when you run this file, before it was running it whenever make_booster or clayton_booster were used in another file
+if __name__ == '__main__':
+    #Examples
+    #print(sets)
+    #print(make_play_booster('dft'))
+    b = make_clayton_booster('dft', 'play')
+    with open('test.json', 'w') as outfile:
+        json.dump(b, outfile, indent=4)
+    #print(get_cards_in_set('war'))
+    #print(get_cards_in_set(sets['Guilds of Ravnica']))
+    #print(make_Card_Sheet_Common('Aetherdrift'))
 
