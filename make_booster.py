@@ -5,6 +5,8 @@ import random
 import os
 from datetime import datetime
 
+from setuptools.windows_support import hide_file
+
 from scryfall_api import make_default_cards_json
 
 CARD_FILE = 'cards/default_cards.json'
@@ -78,8 +80,9 @@ def get_rarity_cards_in_set(set_code: str, rarity: str) -> list:
                 if i['border_color'] not in ('borderless', 'yellow'):
                     if i['nonfoil']:
                         if i['promo'] is False:
-                            if i['name'] not in ('Forest', 'Plains', 'Island', 'Mountain', 'Swamp'):
-                                cards.append(i)
+                            if i.get('promo_types') == None :
+                                if i['name'] not in ('Forest', 'Plains', 'Island', 'Mountain', 'Swamp'):
+                                    cards.append(i)
     return cards
 
 #Get all lands in a set and return a list of them
@@ -168,6 +171,7 @@ def get_List_Card(set_code: str):
 def make_play_booster(set_code: str):
     booster = []
     common_Sheet = make_Card_Sheet(set_code, 'common')
+    print(len(common_Sheet))
     uncommon_Sheet = make_Card_Sheet(set_code, 'uncommon')
     common_Start_Card = random.choice(common_Sheet)
     start_Index = common_Sheet.index(common_Start_Card)
@@ -194,7 +198,6 @@ def make_play_booster(set_code: str):
             else:
                 booster.append(random.choice(get_List_Card(set_code)))
     #get uncommons
-    print(len(uncommon_Sheet))
     uncommon_Start_Card = random.choice(uncommon_Sheet)
     start_Index = uncommon_Sheet.index(uncommon_Start_Card)
     for i in range(3):
@@ -210,11 +213,9 @@ def make_play_booster(set_code: str):
     rare_For_Pack = random.choices(rarity_List, weights=[0, 0, 87.5, 12.5])
     if rare_For_Pack == ['rare']:
         rare_Sheet = make_Card_Sheet(set_code, 'rare')
-        print(len(rare_Sheet))
         booster.append(random.choice(rare_Sheet))
     else:
         mythic_Sheet = make_Card_Sheet(set_code, 'mythic')
-        print(len(mythic_Sheet))
         booster.append(random.choice(mythic_Sheet))
     #get land
     booster.append(random.choice(get_lands_in_set(set_code)))
@@ -242,7 +243,7 @@ def factoring_Easy_Peasy(length: int):
     differences = []
     factor_To_Send: int
     for i in range(length):
-        if i not in [0,1,length]:
+        if i != 0:
             if length % i == 0 and length/i not in factors:
                 factors.append(i)
     for i in range (len(factors)):
@@ -325,4 +326,4 @@ if __name__ == '__main__':
     #print(get_cards_in_set('war'))
     #print(get_cards_in_set(sets['Guilds of Ravnica']))
     #print(make_Card_Sheet_Common('Aetherdrift'))
-
+    print(make_play_booster('blb'))
